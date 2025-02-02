@@ -1,89 +1,38 @@
-import { ApolloServer } from '@apollo/server'
-import { startStandaloneServer } from '@apollo/server/standalone'
+require('dotenv').config();
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const mongoose = require('mongoose');
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
+const loadFixtures = require('./fixtures'); // Import the fixture loader
 
-// data
-import db from './_db.js'
+// Load environment variables
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/graphql_db';
+const FIXTURE = process.env.FIXTURE === 'true'; // Convert to boolean
 
-// types
-import { typeDefs } from './schema.js'
-
-// resolvers
-const resolvers = {
-  Query: {
-    games() {
-      return db.games
-    },
-    game(_, args) {
-      return db.games.find((game) => game.id === args.id)
-    },
-    authors() {
-      return db.authors
-    },
-    author(_, args) {
-      return db.authors.find((author) => author.id === args.id)
-    },
-    reviews() {
-      return db.reviews
-    },
-    review(_, args) {
-      return db.reviews.find((review) => review.id === args.id)
+// Connect to MongoDB
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(async () => {
+    console.log('MongoDB Connected');
+    // Load fixture data if FIXTURE=true
+    if (FIXTURE) {
+      await loadFixtures();
     }
-  },
-  Game: {
-    reviews(parent) {
-      return db.reviews.filter((r) => r.game_id === parent.id)
-    }
-  },
-  Review: {
-    author(parent) {
-      return db.authors.find((a) => a.id === parent.author_id)
-    },
-    game(parent) {
-      return db.games.find((g) => g.id === parent.game_id)
-    }
-  },
-  Author: {
-    reviews(parent) {
-      return db.reviews.filter((r) => r.author_id === parent.id)
-    }
-  },
-  Mutation: {
-    addGame(_, args) {
-      let game = {
-        ...args.game, 
-        id: Math.floor(Math.random() * 10000).toString()
-      }
-      db.games.push(game)
+  })
+  .catch(err => console.error('MongoDB Connection Error:', err));
 
-      return game
-    },
-    deleteGame(_, args) {
-      db.games = db.games.filter((g) => g.id !== args.id)
+// Initialize Express and Apollo Server
+const app = express();
+const server = new ApolloServer({ typeDefs, resolvers });
 
-      return db.games
-    },
-    updateGame(_, args) {
-      db.games = db.games.map((g) => {
-        if (g.id === args.id) {
-          return {...g, ...args.edits}
-        }
+async function startServer() {
+  await server.start();
+  server.applyMiddleware({ app });
 
-        return g
-      })
-
-      return db.games.find((g) => g.id === args.id)
-    }
-  }
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}${server.graphqlPath}`);
+  });
 }
 
-// server setup
-const server = new ApolloServer({
-  typeDefs,
-  resolvers
-})
-
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 }
-})
-
-console.log(`Server ready at: ${url}`)
+startServer();

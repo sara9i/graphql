@@ -1,0 +1,77 @@
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
+
+const Game = require('./models/Game');
+const Author = require('./models/Author');
+const Review = require('./models/Review');
+
+const resolvers = {
+  Query: {
+    games: async () => await Game.find(),
+    game: async (_, { id }) =>{
+      const result =  await Game.findById(new ObjectId(id));
+      console.log("result");
+      console.log(result);
+      return result
+    },  
+
+    authors: async () => await Author.find(),
+    author: async (_, { id }) => await Author.findById(new ObjectId(id)), 
+
+    reviews: async () => {
+      const result = await Review.find().populate('game_id author_id');
+      console.log(result);
+      return result;
+    },
+    review: async (_, { id }) =>{
+      const result = await Review.findById(new ObjectId(id)).populate('game_id author_id')
+      console.log("review result");
+      console.log(result);
+      return result
+    }, 
+  },
+
+  Mutation: {
+    addGame: async (_, { title, platform }) => {
+      const newGame = new Game({ title, platform });
+      return await newGame.save();
+    },
+
+    addAuthor: async (_, { name, verified }) => {
+      const newAuthor = new Author({ name, verified });
+      return await newAuthor.save();
+    },
+
+    addReview: async (_, { rating, content, author_id, game_id }) => {
+      const newReview = new Review({ 
+        rating, 
+        content, 
+        author_id: new ObjectId(author_id),
+        game_id: new ObjectId(game_id)
+      });
+      return await newReview.save();
+    },
+  },
+  Game: {
+    reviews: async (parent) => {
+      return await Review.find({ game_id: parent._id }).populate('author_id');
+    },
+  },
+
+  Review: {
+    author: async (parent) => {
+      return await Author.findById(parent.author_id);
+    },
+    game: async (parent) => {
+      return await Game.findById(parent.game_id);
+    },
+  },
+
+  Author: {
+    reviews: async (parent) => {
+      return await Review.find({ author_id: parent._id });
+    },
+  },
+};
+
+module.exports = resolvers;
