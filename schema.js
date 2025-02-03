@@ -28,6 +28,23 @@ const typeDefs = gql`
     message: String
   }
 
+  input AddGameInput {
+    title: String!, 
+    platform: [String]!
+  }
+
+  input AddAuthorInput {
+    name: String!, 
+    verified: Boolean!
+  }
+
+  input AddReviewInput {
+    rating: Int!,
+    content: String!,
+    authorId: ID!,
+    gameId: ID!
+  }
+
   type Query {
     games: [Game]
     game(id: ID!): Game
@@ -38,12 +55,12 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addGame(title: String!, platform: [String]!): Game
-    addAuthor(name: String!, verified: Boolean!): Author
-    addReview(rating: Int!, content: String!, authorId: ID!, gameId: ID!): Review
+    addGame(game: AddGameInput!): Game
+    addAuthor(author: AddAuthorInput!): Author
+    addReview(review: AddReviewInput!): Review
     deleteGame(id: ID!): Response
     deleteAuthor(id: ID!): Response
-    deleteReview(id: ID!): String
+    deleteReview(id: ID!): Response
   }
 `;
 

@@ -32,23 +32,18 @@ const resolvers = {
   },
 
   Mutation: {
-    addGame: async (_, { title, platform }) => {
-      const newGame = new Game({ title, platform });
+    addGame: async (_, { game }) => {
+      const newGame = new Game(game);
       return await newGame.save();
     },
 
-    addAuthor: async (_, { name, verified }) => {
-      const newAuthor = new Author({ name, verified });
+    addAuthor: async (_, { author }) => {
+      const newAuthor = new Author(author);
       return await newAuthor.save();
     },
 
-    addReview: async (_, { rating, content, author_id, game_id }) => {
-      const newReview = new Review({ 
-        rating, 
-        content, 
-        author_id: new ObjectId(author_id),
-        game_id: new ObjectId(game_id)
-      });
+    addReview: async (_, { review }) => {
+      const newReview = new Review(review);
       return (await newReview.save()).populate('author_id');
     },
     deleteGame: async (_, { id }) => {
