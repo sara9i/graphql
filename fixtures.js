@@ -6,16 +6,16 @@ const Review = require('./models/Review');
 
 const fixtureData = {
   games: [
-    {id: new ObjectId("679fb57182b3d5fb241c2b88"), title: 'Zelda, Tears of the Kingdom', platform: ['Switch']},
-    {id: new ObjectId("679fb57182b3d5fb241c2b89"), title: 'Final Fantasy 7 Remake', platform: ['PS5', 'Xbox']},
-    {id: new ObjectId("679fb57182b3d5fb241c2b8a"), title: 'Elden Ring', platform: ['PS5', 'Xbox', 'PC']},
-    {id: new ObjectId("679fb57182b3d5fb241c2b8b"), title: 'Mario Kart', platform: ['Switch']},
-    {id: new ObjectId("679fb57182b3d5fb241c2b8c"), title: 'Pokemon Scarlet', platform: ['PS5', 'Xbox', 'PC']},
+    {_id: new ObjectId("679fb57182b3d5fb241c2b88"), title: 'Zelda, Tears of the Kingdom', platform: ['Switch']},
+    {_id: new ObjectId("679fb57182b3d5fb241c2b89"), title: 'Final Fantasy 7 Remake', platform: ['PS5', 'Xbox']},
+    {_id: new ObjectId("679fb57182b3d5fb241c2b8a"), title: 'Elden Ring', platform: ['PS5', 'Xbox', 'PC']},
+    {_id: new ObjectId("679fb57182b3d5fb241c2b8b"), title: 'Mario Kart', platform: ['Switch']},
+    {_id: new ObjectId("679fb57182b3d5fb241c2b8c"), title: 'Pokemon Scarlet', platform: ['PS5', 'Xbox', 'PC']},
   ],
   authors: [
-    {id: new ObjectId("679fb62282b3d5fb241c2b8d"), name: 'mario', verified: true},
-    {id: new ObjectId("679fb62282b3d5fb241c2b8e"), name: 'yoshi', verified: false},
-    {id: new ObjectId("679fb62282b3d5fb241c2b8f"), name: 'peach', verified: true},
+    {_id: new ObjectId("679fb62282b3d5fb241c2b8d"), name: 'mario', verified: true},
+    {_id: new ObjectId("679fb62282b3d5fb241c2b8e"), name: 'yoshi', verified: false},
+    {_id: new ObjectId("679fb62282b3d5fb241c2b8f"), name: 'peach', verified: true},
   ],
   reviews: [
     { "_id" : new ObjectId("679fb6a882b3d5fb241c2b90"),
