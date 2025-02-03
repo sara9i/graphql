@@ -23,6 +23,11 @@ const typeDefs = gql`
     game: Game
   }
 
+  type Response {
+    success: Boolean
+    message: String
+  }
+
   type Query {
     games: [Game]
     game(id: ID!): Game
@@ -36,6 +41,9 @@ const typeDefs = gql`
     addGame(title: String!, platform: [String]!): Game
     addAuthor(name: String!, verified: Boolean!): Author
     addReview(rating: Int!, content: String!, authorId: ID!, gameId: ID!): Review
+    deleteGame(id: ID!): Response
+    deleteAuthor(id: ID!): Response
+    deleteReview(id: ID!): String
   }
 `;
 

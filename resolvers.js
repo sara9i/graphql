@@ -49,8 +49,68 @@ const resolvers = {
         author_id: new ObjectId(author_id),
         game_id: new ObjectId(game_id)
       });
-      return await newReview.save();
+      return (await newReview.save()).populate('author_id');
     },
+    deleteGame: async (_, { id }) => {
+      const session = await mongoose.startSession();
+      session.startTransaction();
+      try {
+        // Convert id to ObjectId
+        const gameId = new ObjectId(id);
+        
+        // Delete the Game
+        const gameDeletion = await Game.findByIdAndDelete(gameId, { session });
+        if (!gameDeletion) {
+          throw new Error("Game not found");
+        }
+        
+        // Delete all associated Reviews
+        await Review.deleteMany({ game_id: gameId }, { session });
+        
+        // Commit the transaction
+        await session.commitTransaction();
+        session.endSession();
+        
+        return { success: true, message: "Game and associated reviews deleted successfully" };
+      } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new Error("Failed to delete game: " + error.message);
+      }
+    },
+    
+    deleteAuthor: async (_, { id }) => {
+      const session = await mongoose.startSession();
+      session.startTransaction();
+      try {
+        // Convert id to ObjectId
+        const authorId = new ObjectId(id);
+        
+        // Delete the Author
+        const authorDeletion = await Author.findByIdAndDelete(authorId, { session });
+        if (!authorDeletion) {
+          throw new Error("Author not found");
+        }
+        
+        // Delete all associated Reviews
+        await Review.deleteMany({ author_id: authorId }, { session });
+        
+        // Commit the transaction
+        await session.commitTransaction();
+        session.endSession();
+        
+        return { success: true, message: "Author and associated reviews deleted successfully" };
+      } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new Error("Failed to delete author: " + error.message);
+      }
+    },
+    deleteReview: async (_, { id}) => {
+      await Review.deleteOne({_id: new ObjectId(id)});
+      return { success: true, message: "Review deleted Successfully" };
+    },
+
   },
   Game: {
     reviews: async (parent) => {
