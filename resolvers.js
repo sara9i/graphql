@@ -46,6 +46,20 @@ const resolvers = {
       const newReview = new Review(review);
       return (await newReview.save()).populate('author_id');
     },
+    updateGame: async (_, { id, game }) => {
+      await Game.updateOne({_id: new ObjectId(id)}, game);
+      return Game.findById(new ObjectId(id));
+    },
+
+    updateAuthor: async (_, { id, author }) => {
+      await Author.updateOne({_id: new ObjectId(id)}, author);
+      return Author.findById(new ObjectId(id));
+    },
+
+    updateReview: async (_, { id, review }) => {
+       await Review.updateOne({_id: new ObjectId(id)}, review);
+      return Review.findById(new ObjectId(id));
+    },
     deleteGame: async (_, { id }) => {
       const session = await mongoose.startSession();
       session.startTransaction();

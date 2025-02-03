@@ -30,7 +30,7 @@ const typeDefs = gql`
 
   input AddGameInput {
     title: String!, 
-    platform: [String]!
+    platform: [String!]!
   }
 
   input AddAuthorInput {
@@ -41,8 +41,25 @@ const typeDefs = gql`
   input AddReviewInput {
     rating: Int!,
     content: String!,
-    authorId: ID!,
-    gameId: ID!
+    author_id: ID!,
+    game_id: ID!
+  }
+
+  input UpdateGameInput {
+    title: String, 
+    platform: [String!]
+  }
+
+  input UpdateAuthorInput {
+    name: String, 
+    verified: Boolean
+  }
+
+  input UpdateReviewInput {
+    rating: Int,
+    content: String,
+    author_id: ID,
+    game_id: ID
   }
 
   type Query {
@@ -58,6 +75,9 @@ const typeDefs = gql`
     addGame(game: AddGameInput!): Game
     addAuthor(author: AddAuthorInput!): Author
     addReview(review: AddReviewInput!): Review
+    updateGame(id: ID!, game: UpdateGameInput!): Game
+    updateAuthor(id: ID!, author: UpdateAuthorInput!): Author
+    updateReview(id: ID!, review: UpdateReviewInput!): Review
     deleteGame(id: ID!): Response
     deleteAuthor(id: ID!): Response
     deleteReview(id: ID!): Response
